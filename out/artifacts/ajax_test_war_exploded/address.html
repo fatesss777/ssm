@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>address</title>
+    <script>
+        window.onload=init;
+
+        function init() {
+            //初始化省份
+            initProvince();
+        }
+
+        function initProvince() {
+            var xhr=createXMLHttpRequest();
+            xhr.open("GET","ChinaArea.xml",true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var xmlDoc = xhr.responseXML;
+                    //拿取所有province标签
+                    var pns=xmlDoc.getElementsByTagName("province");
+                    var content = "";
+                    for (var i = 0; i < pns.length; i++) {
+                        content+="<option value='"+pns[i].getAttribute("provinceID")+"'>"+pns[i].getAttribute("province")+"</option>"
+                    }
+                    var oPSel=document.getElementById("province");
+                    oPSel.innerHTML+=content;
+                }
+
+            };
+            xhr.send();
+        }
+
+        function createXMLHttpRequest() {
+            if (window.XMLHttpRequest) {
+                return new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                //针对ie5，ie6
+                return new ActiveXObject("Microsoft.XMLHTTP");
+            } else {
+                alert("请更换浏览器");
+                return null;
+            }
+
+        }
+    </script>
+</head>
+<body>
+<select name="province" id="province">
+    <option value="">请选择省份</option>
+</select>
+<select name="city" id="city">
+    <option value="">请选择城市</option>
+</select>
+<select name="piecearea" id="piecearea">
+    <option value="">请选择区县</option>
+</select>
+</body>
+</html>

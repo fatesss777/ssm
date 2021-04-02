@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wzp.dao.admin.NewsDao">
+    <resultMap id="newsMap" type="News">
+        <id column="id" property="id"/>
+        <result column="categoryId" property="categoryId"/>
+        <result column="title" property="title"/>
+        <result column="abstrs" property="abstrs"/>
+        <result column="tags" property="tags"/>
+        <result column="photo" property="photo"/>
+        <result column="author" property="author"/>
+        <result column="content" property="content"/>
+        <result column="viewNumber" property="viewNumber"/>
+        <result column="commentNumber" property="commentNumber"/>
+        <result column="createTime" property="createTime"/>
+        <association property="newsCategory" javaType="NewsCategory">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+            <result column="sort" property="sort"/>
+        </association>
+    </resultMap>
+    <!--添加新闻-->
+    <insert id="add">
+        insert into news(id,categoryId,title,abstrs,tags,photo,author,content,viewNumber,commentNumber,createTime) values(null,#{categoryId},#{title},#{abstrs},#{tags},#{photo},#{author},#{content},#{viewNumber},#{commentNumber},#{createTime});
+    </insert>
+    <!--修改新闻-->
+    <update id="edit">
+        update news set categoryId=#{categoryId},title=#{title},abstrs=#{abstrs},tags=#{tags},photo=#{photo},author=#{author},content=#{content} where id=#{id};
+    </update>
+    <!--修改新闻评论数-->
+    <update id="updateCommentNumber">
+        update news set commentNumber=commentNumber+1 where id=#{value};
+    </update>
+    <update id="updateViewNumber">
+        update news set viewNumber=viewNumber+1 where id=#{value};
+    </update>
+    <!--删除新闻-->
+    <delete id="delete">
+        delete from news where id=${value};
+    </delete>
+    <!--模糊查询新闻-->
+    <select id="list" resultMap="newsMap">
+        select n.id,n.categoryId,n.title,n.abstrs,n.tags,n.photo,n.author,n.content,n.viewNumber,n.commentNumber,n.createTime,
+        nc.id,nc.name,nc.sort
+        from news n,news_category nc
+        where n.categoryId = nc.id
+        <if test="title!=null">
+            and n.title like '%${title}%'
+        </if>
+        <if test="categoryId!=null">
+            and n.categoryId =#{categoryId}
+        </if>
+        <if test="author!=null">
+            and n.author like '%${author}%'
+        </if>
+        order by n.createTime desc
+        <if test="rows!=null and offSet!=null">
+            limit #{offSet},#{rows};
+        </if>
+    </select>
+    <!--获取新闻数量-->
+    <select id="getTotal" resultType="java.lang.Integer">
+        select count(*) from news where 1=1
+        <if test="title!=null">
+            and title like '%${title}%'
+        </if>
+        <if test="author!=null">
+            and author like '%${author}%'
+        </if>
+    </select>
+    <select id="getNewsById" resultMap="newsMap">
+        select n.id,n.categoryId,n.title,n.abstrs,n.tags,n.photo,n.author,n.content,n.viewNumber,n.commentNumber,n.createTime,
+        nc.id,nc.name,nc.sort
+        from news n,news_category nc
+        where n.categoryId = nc.id and n.id=#{value};
+    </select>
+    <!--按照评论获取前n条新闻-->
+    <select id="getLastCommentList" resultType="com.wzp.entity.admin.News">
+        select id,categoryId,title,abstrs,tags,photo,author,content,viewNumber,commentNumber,createTime
+        from news
+        order by commentNumber
+        limit 0,#{value};
+    </select>
+
+
+</mapper>

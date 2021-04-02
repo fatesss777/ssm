@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wzp.dao.admin.RoleDao">
+    <insert id="addRole">
+        insert into role(id,name,remark) values(null,#{name},#{remark});
+    </insert>
+    <update id="editRole">
+        update role set name=#{name},remark=#{remark} where id=#{id};
+    </update>
+    <delete id="deleteRole">
+        delete from role where id=#{id};
+    </delete>
+    <select id="selectRole" resultType="com.wzp.entity.admin.Role">
+        select id,name,remark from role
+        <if test="name!=null">
+            where name like '%${name}%'
+        </if>
+        <if test="rows!=null and offSet!=null">
+            limit #{offSet},#{rows};
+        </if>
+    </select>
+    <select id="getTotal" resultType="java.lang.Integer">
+        select count(*) from role
+        <if test="name!=null">
+            where name like '%${name}%';
+        </if>
+    </select>
+    <!--根据角色id查询角色-->
+    <select id="selectRoleById" resultType="com.wzp.entity.admin.Role">
+        select id,name,remark from role where id=#{id};
+    </select>
+</mapper>

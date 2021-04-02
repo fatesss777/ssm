@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wzp.dao.admin.CommentDao">
+    <resultMap id="commentMap" type="Comment">
+        <id column="id" property="id"/>
+        <result column="newsId" property="newsId"/>
+        <result column="nickname" property="nickname"/>
+        <result column="content" property="content"/>
+        <result column="createTime" property="createTime"/>
+        <association property="news" javaType="News">
+            <id column="id" property="id"/>
+            <result column="categoryId" property="categoryId"/>
+            <result column="title" property="title"/>
+            <result column="abstrs" property="abstrs"/>
+            <result column="tags" property="tags"/>
+            <result column="photo" property="photo"/>
+            <result column="author" property="author"/>
+            <result column="content" property="content"/>
+            <result column="viewNumber" property="viewNumber"/>
+            <result column="commentNumber" property="commentNumber"/>
+            <result column="createTime" property="createTime"/>
+        </association>
+    </resultMap>
+    <!--添加评论-->
+    <insert id="add">
+        insert into comment(id,newsId,nickname,content,createTime) values(null ,#{newsId},#{nickname},#{content},#{createTime});
+    </insert>
+    <!--编辑评论-->
+    <update id="edit">
+        update comment set newsId=#{newsId},nickname=#{nickname},content=#{content} where id=#{id};
+    </update>
+    <!--删除评论-->
+    <delete id="delete">
+        delete from comment where id in(${value});
+    </delete>
+    <!--模糊查询评论-->
+    <select id="list" resultMap="commentMap">
+        select c.id,c.newsId,c.nickname,c.content,c.createTime,n.id,n.categoryId,n.title,n.abstrs,n.tags,n.photo,n.author,n.content,n.viewNumber,n.commentNumber,n.createTime
+        from news n,comment c
+        where n.id=c.newsId
+        <if test="nickname!=null">
+            and c.nickname like '%${nickname}%'
+        </if>
+        <if test="newsId!=null">
+            and c.newsId = #{newsId}
+        </if>
+        <if test="content!=null">
+            and c.content like '%${content}%'
+        </if>
+        order by c.createTime desc
+        <if test="rows!=null and offSet!=null">
+            limit #{offSet},#{rows};
+        </if>
+    </select>
+    <select id="getTotal" resultType="java.lang.Integer">
+        select count(*) from comment where 1=1
+        <if test="nickname!=null">
+            and nickname like '%${nickname}%'
+        </if>
+        <if test="content!=null">
+            and content like '%${content}%'
+        </if>
+    </select>
+    <select id="findAll" resultType="com.wzp.entity.admin.Comment">
+        select id,newsId,nickname,content,createTime from comment order by createTime desc;
+    </select>
+
+</mapper>

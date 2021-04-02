@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>helloAjax</title>
+    <script>
+        window.onload=function () {
+          var oBtn=document.getElementById("btn");
+          oBtn.onclick=getData;
+        };
+
+        function getData() {
+            //alert("xxxx");
+            //创建xhr对象
+            var xhr = createXMLHttpRequest();
+            //调用open方法指向servlet
+            xhr.open("GET", "helloAjaxServlet", true);
+            //检测xhr对象状态，合适的时候处理
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("div1").innerHTML=xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+
+        function createXMLHttpRequest() {
+            if (window.XMLHttpRequest) {
+                return new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                //针对ie5，ie6
+                return new ActiveXObject("Microsoft.XMLHTTP");
+            } else {
+                alert("请更换浏览器");
+                return null;
+            }
+
+        }
+    </script>
+</head>
+<body>
+<h1>这里是helloAjax页面</h1>
+<input type="button" id="btn" value="提交">
+<div id="div1" >这里是原始的内容</div>
+</body>
+</html>

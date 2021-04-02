@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wzp.dao.admin.MenuDao">
+    <!--添加菜单-->
+    <insert id="add" parameterType="Menu">
+        insert into menu(id,parentId,name,url,icon) values(null,#{parentId},#{name},#{url},#{icon});
+    </insert>
+    <!--修改菜单-->
+    <update id="edit">
+        update menu set name=#{name},parentId=#{parentId},url=#{url},icon=#{icon} where id=#{id};
+    </update>
+    <!--删除菜单-->
+    <delete id="delete">
+        delete from menu where id=#{id};
+    </delete>
+    <!--查询菜单-->
+    <select id="selectList" resultType="Menu" parameterType="Map">
+        select id,parentId,name,url,icon from menu where 1=1
+        <if test="parentId!=null">
+            and parentId=#{parentId}
+        </if>
+        /*模糊查询*/
+        <if test="name!=null">
+            and name like '%${name}%'
+        </if>
+        <if test="rows!=null and offSet!=null">
+            limit #{offSet},#{rows};
+        </if>
+    </select>
+    <!--查询菜单总数-->
+    <select id="selectTotal" resultType="java.lang.Integer">
+        select count(*) from menu where 1=1
+        <if test="parentId!=null">
+            and parentId=#{parentId}
+        </if>
+        /*模糊查询*/
+        <if test="name!=null">
+            and name like '%${name}%'
+        </if>
+    </select>
+    <!--查询顶级菜单-->
+    <select id="selectTopList" resultType="com.wzp.entity.admin.Menu">
+        select id,parentId,name,url,icon from menu where parentId=0;
+    </select>
+    <!--查询指定菜单下面的所有子菜单-->
+    <select id="selectChildrenList" resultType="com.wzp.entity.admin.Menu">
+        select id,parentId,name,url,icon from menu where parentId=#{parentId};
+    </select>
+    <!--查询所选id所对应的所有菜单信息-->
+    <select id="selectMenusByIds" resultType="com.wzp.entity.admin.Menu">
+        select id,parentId,name,url,icon from menu where id in(${value});
+    </select>
+</mapper>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>userJson</title>
+    <script>
+        window.onload=init;
+
+        function init() {
+            var oSel = document.getElementById("sel");
+            oSel.onchange=getData;
+        }
+
+        function getData() {
+            var mapKey=this.value;
+
+            var xhr=createXMLHttpRequest();
+            //xhr.open("GET", "userServlet?mapKey=" + mapKey, true);
+            xhr.open("POST", "userServlet", true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var json=xhr.responseText;
+                    var jsonObject = eval(json);
+                    var node = "";
+                    for (var i = 0; i < jsonObject.length; i++) {
+                        node += jsonObject[i].id + "---" + jsonObject[i].name + "---" + jsonObject[i].password+"<br/>";
+                    }
+                }
+                document.getElementById("div1").innerHTML = node;
+            };
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send("mapKey="+mapKey);
+
+        }
+
+        function createXMLHttpRequest() {
+            if (window.XMLHttpRequest) {
+                return new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                //针对ie5，ie6
+                return new ActiveXObject("Microsoft.XMLHTTP");
+            } else {
+                alert("请更换浏览器");
+                return null;
+            }
+
+        }
+    </script>
+</head>
+<body>
+<select name="sel" id="sel">
+    <option value="1">分组1</option>
+    <option value="2">分组2</option>
+    <option value="3">分组3</option>
+</select>
+<div id="div1"></div>
+</body>
+</html>

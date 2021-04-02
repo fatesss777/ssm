@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wzp.dao.admin.UserDao">
+    <!--添加用户-->
+    <insert id="addUser">
+        insert into user(id,username,password,photo,sex,age,address,roleId) values(null ,#{username},#{password},#{photo},#{sex},#{age},#{address},#{roleId});
+    </insert>
+    <!--修改用户-->
+    <update id="editUser">
+        update user set username=#{username},photo=#{photo},sex=#{sex},age=#{age},address=#{address},roleId=#{roleId} where id=#{id}
+    </update>
+    <!--修改密码-->
+    <update id="editPassword">
+        update user set password=#{password} where id=#{id};
+    </update>
+    <!--删除用户-->
+    <delete id="deleteUser">
+        delete from user where id in(${value});
+    </delete>
+
+    <select id="findUserByName" parameterType="String" resultType="com.wzp.entity.admin.User">
+        select id,username,password,photo,sex,age,address,roleId from user where username=#{username};
+    </select>
+    <!--查找user-->
+    <select id="selectUser" resultType="com.wzp.entity.admin.User">
+        select id,username,password,photo,sex,age,address,roleId from user where 1=1
+        <if test="username!=null">
+            and username like '%${username}%'
+        </if>
+        <if test="roleId!=null">
+            and roleId = #{roleId}
+        </if>
+        <if test="sex!=null">
+            and sex = #{sex}
+        </if>
+        <if test="rows!=null and offSet!=null">
+            limit #{offSet},#{rows};
+        </if>
+    </select>
+    <!--获取user总数-->
+    <select id="getTotal" resultType="java.lang.Integer">
+        select count(*) from user where 1=1
+        <if test="username!=null">
+            and username like '%${username}%'
+        </if>
+        <if test="roleId!=null">
+            and roleId = #{roleId}
+        </if>
+        <if test="sex!=null">
+            and sex = #{sex}
+        </if>
+    </select>
+</mapper>

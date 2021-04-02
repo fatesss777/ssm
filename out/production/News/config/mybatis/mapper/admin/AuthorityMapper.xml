@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wzp.dao.admin.AuthorityDao">
+    <!--权限插入-->
+    <insert id="add">
+        insert into authority(id,roleId,menuId) values(null,#{roleId},#{menuId});
+    </insert>
+    <!--权限删除-->
+    <delete id="deleltByRoleId">
+        delete from authority where roleId=#{roleId};
+    </delete>
+    <!--权限查找-->
+    <select id="selectListByRoleId" resultType="com.wzp.entity.admin.Authority">
+        select id,roleId,menuId from authority
+        <if test="_parameter!=null">
+            where roleId=#{roleId};
+        </if>
+    </select>
+
+
+</mapper>
